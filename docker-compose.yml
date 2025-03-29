@@ -1,0 +1,31 @@
+version: "3.7" # Versi Legacy Docker Compose File
+
+services: # Mendefinisikan bagian services yang akan dibuat
+  item-app: # Membuat service bernama "item-app"
+    image: ghcr.io/zaidanrizq/item-app:v1 # Service akan menggunakan image item-app dari GitHub Container Registry yang telah kita push
+    ports: # Mendefinisikan bagian port yang akan digunakan service
+      - 80:8080 # Expose port 80 untuk host dan 8080 untuk container
+    networks: # Mendefinisikan bagian network yang akan digunakan service
+      - express-mongo # Network dengan nama "express-mongo" akan digunakan
+    depends_on: # Mendefinisikan bagian kebergantukan service terhadap service apa
+      - item-db # Service akan berjalan dan bergantung apabila service "item-db" telah berjalan
+    restart: always # Mendefinisikan restart policy "always" agar container selalu merestart ketika container terhenti
+
+  item-db: # Membuat servce bernama "item-db"
+    image: mongo:3 # Service akan menggunakan image mongo dengan tag versi 3
+    ports: # Mendefinisikan bagian port yang akan digunakan service
+      - 27017:27017 # Expose port 27017 untuk host dan container sebagai default port dari mongodb
+    volumes: # Mendefinisikan bagian volume yang akan digunakan service
+      - app-db:/data/db # Volume "app-db" akan digunakan dan di mount ke directory /data/db yang ada pada container mongodb 
+    networks: # Mendefinisikan bagian network yang akan digunakan service
+      - express-mongo # Network "express-mongo" akan digunakan
+    environment: # Mendefinisikan environment yang akan digunakan oleh service
+      MONGO_INITDB_DATABASE: accumulator # Init atau membuat database dengan nama "accumulator"
+    restart: always # Mendefinisikan restart policy "always: agar container selalu merestart ketika container terhenti
+
+networks: # Mendefinisikan bagian networks yang akan dibuat
+  express-mongo: # Network dengan nama "express-mongo" akan dibuat
+    driver: bridge # Mode bridge sesuai gambar ilustrasi project
+
+volumes: # Mendefinisikan bagian volumes yang akan dibuat
+  app-db: # Volume dengan nama "app-db" akan dibuat
