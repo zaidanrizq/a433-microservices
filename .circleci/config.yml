@@ -1,0 +1,53 @@
+# Menggunakan CircleCI pipeline process engine versi 2.1
+version: 2.1
+
+jobs:
+  # Job untuk menginstall dan menjalankan Hadolint tergadap Dockerfile
+  lint-dockerfile:
+    # Menggunakan image official Hadolint dengan tag latest version
+    docker:
+      - image: hadolint/hadolint:latest-alpine
+    steps:
+      # Checkout project repository yang sudah ditentukan
+      - checkout
+      # Menjalankan hadolint terhadap Dockerfile
+      - run:
+          name: Run Hadolint
+          command: hadolint Dockerfile
+
+  # Job untuk menjalankan unit test
+  test-app:
+    # Menggunakan image official Go dengan tag versi 1.15
+    docker:
+      - image: golang:1.15
+    steps:
+      # Checkout project repository yang sudah ditentukan
+      - checkout
+      # Menjalankan command unit test
+      - run:
+          name: Run Unit Test
+          command: go test -v -short --count=1 $(go list ./...)
+
+  # Job untuk menjalankan build dan push Docker Image
+  build-app-karsajobs:
+    # Menggunakan docker image degan tag latest version
+    docker:
+      - image: docker:latest
+    steps:
+      # Checkout project repository yang sudah ditentukan
+      - checkout
+      # Menjalankan script file build dan push image
+      - run:
+        name: Build and Push Image
+        command: ./build_push_image_karsajobs.sh
+
+workflows:
+  ci-workflow:
+    jobs:
+      - lint-dockerfile
+      - test-app:
+          requires:
+            - lint-dockerfile
+      - build-app-karsajobs:
+          requires:
+            - test-app
