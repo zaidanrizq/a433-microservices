@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 # Set konfigurasi keluar dari script bila ada error
 set -e
