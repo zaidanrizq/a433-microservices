@@ -5,7 +5,7 @@ set -e
 
 # Build image dari Dockerfile
 echo "Building Docker Image..."
-docker build -t ghcri.io/zaidanrizq/karsajobs:latest .
+docker build -t ghcr.io/zaidanrizq/karsajobs:latest .
 
 
 # Login ke GitHub Container Registry
