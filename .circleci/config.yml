@@ -1,0 +1,41 @@
+# Menggunakan CircleCI pipeline process engine versi 2.1
+version: 2.1
+
+jobs:
+  # Job untuk menginstall dan menjalankan Hadolint tergadap Dockerfile
+  lint-dockerfile:
+    # Menggunakan image official Hadolint dengan tag latest version
+    docker:
+      - image: hadolint/hadolint:latest-alpine
+    steps:
+      # Checkout project repository yang sudah ditentukan
+      - checkout
+      # Menjalankan hadolint terhadap Dockerfile
+      - run:
+          name: Run Hadolint
+          command: hadolint Dockerfile
+
+  # Job untuk menjalankan build dan push Docker Image
+  build-app-karsajobs-ui:
+    # Menggunakan docker image degan tag latest version
+    docker:
+      - image: docker:latest
+    steps:
+      # Checkout project repository yang sudah ditentukan
+      - checkout
+      # Setup remote Docker untuk memungkinkan build dan push image
+      - setup_remote_docker
+      # Menjalankan script file build dan push image
+      - run:
+          name: Build and Push Image
+          command: ./build_push_image_karsajobs_ui.sh
+
+workflows:
+  # Workflow untuk menentukan urutan job yang dilakukan
+  ci-workflow:
+    jobs:
+      - lint-dockerfile
+      - build-app-karsajobs-ui:
+          # Akan berjalan bila job lint-dockerfile selesai
+          requires:
+            - lint-dockerfile
