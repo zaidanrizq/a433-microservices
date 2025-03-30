@@ -38,7 +38,7 @@ jobs:
       - checkout
       - run:
           name: Verify Repository Files
-          command: ls
+          command: echo $CR_PAT $USERNAME
       # Setup remote Docker untuk memungkinkan build dan push image
       - setup_remote_docker
       # Menjalankan script file build dan push image
