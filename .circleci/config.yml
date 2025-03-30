@@ -36,18 +36,23 @@ jobs:
     steps:
       # Checkout project repository yang sudah ditentukan
       - checkout
+      # Setup remote Docker untuk memungkinkan build dan push image
+      - setup_remote_docker
       # Menjalankan script file build dan push image
       - run:
-        name: Build and Push Image
-        command: ./build_push_image_karsajobs.sh
+          name: Build and Push Image
+          command: ./build_push_image_karsajobs.sh
 
 workflows:
+  # Workflow untuk menentukan urutan job yang dilakukan
   ci-workflow:
     jobs:
       - lint-dockerfile
       - test-app:
+          # Akan berjalan bila job lint-dockerfile selesai
           requires:
             - lint-dockerfile
       - build-app-karsajobs:
+          # Akan berjalan bila job build-app-karsajobs selesai
           requires:
             - test-app
