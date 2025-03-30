@@ -36,6 +36,9 @@ jobs:
     steps:
       # Checkout project repository yang sudah ditentukan
       - checkout
+      - run:
+          name: Verify Repository Files
+          command: ls
       # Setup remote Docker untuk memungkinkan build dan push image
       - setup_remote_docker
       # Menjalankan script file build dan push image
